@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить блюдо{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-plus"></i> Добавить новое блюдо</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('dishes.add_dish') }}">
+                    {{ form.hidden_tag() }}
+
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                        {% for error in form.name.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text">Название должно быть уникальным</div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.ingredients.label(class="form-label") }}
+                        {{ form.ingredients(class="form-control" + (" is-invalid" if form.ingredients.errors else ""), rows=5) }}
+                        {% for error in form.ingredients.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text">Перечислите ингредиенты через запятую или построчно</div>
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.url.label(class="form-label") }}
+                        {{ form.url(class="form-control" + (" is-invalid" if form.url.errors else "")) }}
+                        {% for error in form.url.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                        <div class="form-text">Ссылка на YouTube видео (необязательно)</div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('dishes.dishes_list') }}" class="btn btn-secondary me-md-2">Отмена</a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

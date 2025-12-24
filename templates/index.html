@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Рецензии на блюда - Главная{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <!-- Заголовок и приветствие -->
+            <div class="mb-5">
+                <h1 class="display-4 mb-4">
+                    <i class="fas fa-utensils text-primary"></i>
+                    Добро пожаловать в Рецензии на блюда!
+                </h1>
+                <p class="lead text-muted mb-4">
+                    Платформа для настоящих гурманов и любителей кулинарии.
+                    Делитесь своими рецептами, оценивайте блюда и создавайте собственную коллекцию избранного!
+                </p>
+            </div>
+
+            <!-- Особенности платформы -->
+            <div class="row g-4 mb-5">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-star fa-3x text-warning"></i>
+                            </div>
+                            <h4 class="card-title mb-3">Оценка блюд</h4>
+                            <p class="card-text text-muted">
+                                Ставьте оценки от 1 до 5 звезд, делитесь своим мнением о различных блюдах.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-heart fa-3x text-danger"></i>
+                            </div>
+                            <h4 class="card-title mb-3">Избранное</h4>
+                            <p class="card-text text-muted">
+                                Сохраняйте понравившиеся блюда в избранное для быстрого доступа.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="feature-icon mb-3">
+                                <i class="fas fa-plus-circle fa-3x text-success"></i>
+                            </div>
+                            <h4 class="card-title mb-3">Добавление рецептов</h4>
+                            <p class="card-text text-muted">
+                                Добавляйте свои собственные блюда с описанием и видео-рецептами.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Призыв к действию -->
+            <div class="bg-light p-5 rounded-3 mb-5">
+                <h2 class="mb-4">Начните прямо сейчас!</h2>
+                <p class="mb-4">
+                    Присоединяйтесь к нашему сообществу кулинаров и делитесь своими гастрономическими открытиями.
+                </p>
+                <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg px-5 me-md-3">
+                        <i class="fas fa-user-plus me-2"></i>Зарегистрироваться
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg px-5">
+                        <i class="fas fa-sign-in-alt me-2"></i>Войти
+                    </a>
+                </div>
+            </div>
+
+            <!-- Как это работает -->
+            <div class="mb-5">
+                <h3 class="mb-4">Как это работает?</h3>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card p-3">
+                            <div class="step-number mb-3">
+                                <span class="badge bg-primary rounded-circle p-3">1</span>
+                            </div>
+                            <h5>Регистрация</h5>
+                            <p class="text-muted small">Создайте аккаунт за минуту</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card p-3">
+                            <div class="step-number mb-3">
+                                <span class="badge bg-primary rounded-circle p-3">2</span>
+                            </div>
+                            <h5>Просмотр блюд</h5>
+                            <p class="text-muted small">Изучите коллекцию блюд</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card p-3">
+                            <div class="step-number mb-3">
+                                <span class="badge bg-primary rounded-circle p-3">3</span>
+                            </div>
+                            <h5>Оценка</h5>
+                            <p class="text-muted small">Оцените понравившиеся блюда</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="step-card p-3">
+                            <div class="step-number mb-3">
+                                <span class="badge bg-primary rounded-circle p-3">4</span>
+                            </div>
+                            <h5>Добавление</h5>
+                            <p class="text-muted small">Добавьте свои рецепты</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API информация -->
+            <div class="card border-info mb-5">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-code me-2"></i>Для разработчиков</h4>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">
+                        Наше приложение предоставляет RESTful API для интеграции с другими сервисами.
+                        Все возможности доступны через API.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-dark">GET /api/dishes</span>
+                        <span class="badge bg-dark">POST /api/dishes</span>
+                        <span class="badge bg-dark">GET /api/users</span>
+                        <span class="badge bg-dark">POST /api/dishes/{id}/rate</span>
+                    </div>
+                    <a href="/api/dishes" class="btn btn-outline-info mt-3" target="_blank">
+                        <i class="fas fa-external-link-alt me-2"></i>Попробовать API
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

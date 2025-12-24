@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ dish.name }}</h1>
+
+<div class="mb-3">
+    <strong>Ингредиенты:</strong>
+    <p>{{ dish.ingredients }}</p>
+</div>
+
+{% if dish.url %}
+<div class="mb-3">
+    <strong>Видео:</strong><br>
+    <a href="{{ dish.url }}" target="_blank">{{ dish.url }}</a>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        <h5>Рейтинг: {{ average_rating }} ({{ rating_count }} оценок)</h5>
+        
+        <form method="POST" action="{{ url_for('dishes.rate_dish', dish_id=dish.id) }}" class="mb-3">
+            <label>Ваша оценка:</label><br>
+            {% for i in range(1, 6) %}
+                <button type="submit" name="rating" value="{{ i }}" class="btn btn-outline-warning">
+                    {{ i }}
+                </button>
+            {% endfor %}
+            {% if user_rating %}
+                <p>Текущая оценка: {{ user_rating }}</p>
+            {% endif %}
+        </form>
+        
+        <form method="POST" action="{{ url_for('dishes.toggle_favourite', dish_id=dish.id) }}">
+            <button type="submit" class="btn {% if is_favourite %}btn-warning{% else %}btn-outline-warning{% endif %}">
+                {% if is_favourite %}Удалить из избранного{% else %}Добавить в избранное{% endif %}
+            </button>
+        </form>
+    </div>
+</div>
+
+<a href="{{ url_for('dishes.dishes_list') }}" class="btn btn-secondary mt-3">Назад</a>
+{% endblock %}

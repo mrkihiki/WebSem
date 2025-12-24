@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Список блюд</h1>
+
+<div class="mb-3">
+    <a href="{{ url_for('dishes.dishes_list') }}" class="btn btn-outline-primary">Все</a>
+    <a href="{{ url_for('dishes.dishes_list', sort='rating') }}" class="btn btn-outline-primary">По рейтингу</a>
+    <a href="{{ url_for('dishes.dishes_list', sort='favourites') }}" class="btn btn-outline-primary">Избранное</a>
+</div>
+
+<div class="row">
+    {% for dish in dishes %}
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5>{{ dish.name }}</h5>
+                <p>Рейтинг: {{ dish.average_rating }} ({{ dish.rating_count }} оценок)</p>
+                {% if dish.user_rating %}
+                <p>Ваша оценка: {{ dish.user_rating }}</p>
+                {% endif %}
+                {% if dish.is_favourite %}
+                <p class="text-warning">★ В избранном</p>
+                {% endif %}
+                <a href="{{ url_for('dishes.dish_detail', dish_id=dish.id) }}" class="btn btn-primary">Подробнее</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
