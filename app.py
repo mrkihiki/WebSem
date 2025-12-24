@@ -18,6 +18,9 @@ bootstrap = Bootstrap5(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+# Инициализация базы данных
+db_session.global_init("db/my.db")
+
 app.register_blueprint(auth_bp)
 app.register_blueprint(dishes_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
@@ -261,8 +264,6 @@ def index():
 
 
 if __name__ == '__main__':
-    # Инициализация базы данных
-    db_session.global_init("db/my.db")
 
     # Создаем необходимые представления
     create_views()
