@@ -10,7 +10,7 @@
                 <h4 class="mb-0"><i class="fas fa-plus"></i> Добавить новое блюдо</h4>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('dishes.add_dish') }}">
+                <form method="POST">
                     {{ form.hidden_tag() }}
 
                     <div class="mb-3">

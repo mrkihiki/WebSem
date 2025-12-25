@@ -11,7 +11,7 @@
 {% if dish.url %}
 <div class="mb-3">
     <strong>Видео:</strong><br>
-    <a href="{{ dish.url }}" target="_blank">{{ dish.url }}</a>
+    <iframe width="560" height="315" src="{{ dish.url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 {% endif %}
 

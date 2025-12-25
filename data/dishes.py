@@ -13,10 +13,14 @@ class Dish(SqlAlchemyBase, SerializerMixin):
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
     ingredients = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     url = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    author_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                  sqlalchemy.ForeignKey("users.id"),
+                                  nullable=True)
 
     # Связи
     ratings = orm.relationship("DishRating", back_populates='dish')
     favourites = orm.relationship("Favourite", back_populates='dish')
+    author = orm.relationship('User', backref='created_dishes')
 
     def get_average_rating(self, session=None):
         from .dish_ratings import DishRating
@@ -49,14 +53,14 @@ class Dish(SqlAlchemyBase, SerializerMixin):
         if session is None:
             from .db_session import create_session
             session = create_session()
-
         result = session.query(Favourite).filter(
             Favourite.user_id == user_id,
-            Favourite.dish_id == self.id
+            Favourite.dishes_id == self.id
         ).first() is not None
 
         session.close()
         return result
+
 
     def __repr__(self):
         return f"<Dish> {self.name} {self.ingredients}"

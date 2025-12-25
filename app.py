@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_bootstrap import Bootstrap5
 from flask_login import current_user, LoginManager
@@ -19,11 +21,13 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # Инициализация базы данных
-db_session.global_init("db/my.db")
+if os.environ.get("FLASK_ENV") != "testing":
+    db_session.global_init("db/my.db")
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(dishes_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
+
 
 def get_navbar():
     navbar_html = '''<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -122,33 +126,41 @@ def seed_database():
         admin = User(login='admin')
         admin.set_password('admin123')
         session.add(admin)
+        session.commit()
+    else:
+        admin = User(login='admin')
 
     # Тестовые блюда
     test_dishes = [
         {
             'name': 'Паста Карбонара',
             'ingredients': 'Спагетти, бекон, яйца, сыр пармезан, черный перец, соль',
-            'url': 'https://www.youtube.com/embed/D_2DBLAt57c'
+            'url': 'https://www.youtube.com/embed/D_2DBLAt57c',
+            'author_id': admin.id
         },
         {
             'name': 'Салат Цезарь',
             'ingredients': 'Куриное филе, салат романо, сухарики, сыр пармезан, соус цезарь',
-            'url': 'https://www.youtube.com/embed/BqG7tQY3gEI'
+            'url': 'https://www.youtube.com/embed/BqG7tQY3gEI',
+            'author_id': admin.id
         },
         {
             'name': 'Борщ',
             'ingredients': 'Свекла, капуста, картофель, морковь, лук, говядина, сметана',
-            'url': 'https://www.youtube.com/embed/ZY8K_cFq-Xc'
+            'url': 'https://www.youtube.com/embed/ZY8K_cFq-Xc',
+            'author_id': admin.id
         },
         {
             'name': 'Пельмени',
             'ingredients': 'Мука, яйца, вода, говядина, свинина, лук, соль, перец',
-            'url': 'https://www.youtube.com/embed/q8VyKXm6R8E'
+            'url': 'https://www.youtube.com/embed/q8VyKXm6R8E',
+            'author_id': admin.id
         },
         {
             'name': 'Пицца Маргарита',
             'ingredients': 'Мука, дрожжи, помидоры, сыр моцарелла, базилик, оливковое масло',
-            'url': 'https://www.youtube.com/embed/9f9-xE3tEEk'
+            'url': 'https://www.youtube.com/embed/9f9-xE3tEEk',
+            'author_id': admin.id
         }
     ]
 
@@ -264,7 +276,6 @@ def index():
 
 
 if __name__ == '__main__':
-
     # Создаем необходимые представления
     create_views()
 

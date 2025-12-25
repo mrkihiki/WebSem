@@ -23,6 +23,18 @@
                 <p class="text-warning">★ В избранном</p>
                 {% endif %}
                 <a href="{{ url_for('dishes.dish_detail', dish_id=dish.id) }}" class="btn btn-primary">Подробнее</a>
+                <a href="{{ url_for('dishes.edit_dish', dish_id=dish.id) }}"
+                               class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Изменить
+                            </a>
+                <form action="{{ url_for('dishes.delete_dish', dish_id=dish.id) }}"
+                                  method="POST"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Вы уверены, что хотите удалить эту работу?');">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                </form>
             </div>
         </div>
     </div>

@@ -11,6 +11,22 @@ from forms.dish import AddDishForm
 dishes_bp = Blueprint('dishes', __name__)
 
 
+def can_edit_dish(dish, user):
+    """Проверяет, может ли пользователь редактировать/удалять блюдо"""
+    if not user.is_authenticated:
+        return False
+
+    # Админ (ID=1) может всё
+    if user.id == 1:
+        return True
+
+    # Автор блюда может редактировать свое блюдо
+    if dish.author_id == user.id:
+        return True
+
+    return False
+
+
 @dishes_bp.route('/dishes', methods=['GET'])
 @login_required
 def dishes_list():
@@ -130,22 +146,112 @@ def add_dish():
             flash('Блюдо с таким названием уже существует', 'danger')
             session.close()
             return redirect(url_for('dishes.add_dish'))
-
+        if not form.is_youtube_link(form.url.data) and  form.url.data  != "":
+            flash('Неверная ссылка', 'danger')
+            session.close()
+            return redirect(url_for('dishes.add_dish'))
         dish = Dish(
             name=form.name.data,
             ingredients=form.ingredients.data,
-            url=form.url.data if form.url.data else None
+            url=form.url.data if form.url.data else None,
+            author_id=current_user.id
         )
-
         session.add(dish)
         session.commit()
         session.close()
-
-        flash(f'Блюдо "{dish.name}" успешно добавлено!', 'success')
+        flash(f'Блюдо "{form.name.data}" успешно добавлено!', 'success')
         return redirect(url_for('dishes.dishes_list'))
 
     return render_template('add_dish.html',
                            title='Добавить блюдо',
+                           form=form,
+                           get_navbar=get_navbar(),
+                           get_footer=get_footer())
+
+
+@dishes_bp.route('/dishes/<int:dish_id>/delete', methods=['POST'])
+@login_required
+def delete_dish(dish_id):
+    session = db_session.create_session()
+    dish = session.query(Dish).get(dish_id)
+
+    if not dish:
+        flash('Блюдо не найдено', 'danger')
+        session.close()
+        return redirect(url_for('dishes.dishes_list'))
+
+    if not can_edit_dish(dish, current_user):
+        flash('У вас нет прав для удаления этого блюда', 'danger')
+        session.close()
+        return redirect(url_for('dishes.dish_detail', dish_id=dish_id))
+
+    dish_name = dish.name
+    session.delete(dish)
+    session.commit()
+    session.close()
+
+    flash(f'Блюдо "{dish_name}" успешно удалено!', 'success')
+    return redirect(url_for('dishes.dishes_list'))
+
+
+@dishes_bp.route('/dishes/<int:dish_id>/edit', methods=['GET', 'POST'])
+@login_required
+def edit_dish(dish_id):
+    session = db_session.create_session()
+    dish = session.query(Dish).get(dish_id)
+
+    if not dish:
+        flash('Блюдо не найдено', 'danger')
+        session.close()
+        return redirect(url_for('dishes.dishes_list'))
+
+    # Проверяем права
+    if not can_edit_dish(dish, current_user):
+        flash('У вас нет прав для редактирования этого блюда', 'danger')
+        session.close()
+        return redirect(url_for('dishes.dishes_list', dish_id=dish_id))
+
+    form = AddDishForm()
+    if form.validate_on_submit():
+        # Проверяем уникальность названия (если оно изменилось)
+        print(form.name.data)
+        if dish.name != form.name.data:
+            existing_dish = session.query(Dish).filter(
+                Dish.name == form.name.data,
+                Dish.id != dish_id
+            ).first()
+            if existing_dish:
+                flash('Блюдо с таким названием уже существует', 'danger')
+                session.close()
+                return render_template('add_dish.html',
+                                       title='Редактировать блюдо',
+                                       form=form,
+                                       get_navbar=get_navbar(),
+                                       get_footer=get_footer())
+        if not form.is_youtube_link(form.url.data) and  form.url.data  != "":
+            flash('Неверная ссылка', 'danger')
+            session.close()
+            return redirect(url_for('dishes.edit_dish', dish_id=dish_id))
+        # Обновляем данные
+        dish.name = form.name.data
+        dish.ingredients = form.ingredients.data
+        dish.url = form.url.data if form.url.data else None
+
+        session.commit()
+        session.close()
+        flash(f'Блюдо "{form.name.data}" успешно обновлено!', 'success')
+        return redirect(url_for('dishes.dish_detail', dish_id=dish_id))
+
+    # Заполняем форму текущими данными
+    if request.method == 'GET':
+        form.name.data = dish.name
+        form.ingredients.data = dish.ingredients
+        form.url.data = dish.url
+
+    session.close()
+
+    return render_template('add_dish.html',
+                           title='Редактировать блюдо1',
                            form=form,
                            get_navbar=get_navbar(),
                            get_footer=get_footer())
