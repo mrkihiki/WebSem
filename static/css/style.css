@@ -1,3 +1,56 @@
+/* Стили для главной страницы */
+.error-template {
+    padding: 40px 20px;
+}
+
+.error-template h1 {
+    font-size: 10rem;
+    margin-bottom: 20px;
+}
+
+.error-template h2 {
+    font-size: 3rem;
+    margin-bottom: 30px;
+}
+
+.error-actions {
+    margin-top: 30px;
+}
+
+/* Адаптивность для ошибок */
+@media (max-width: 768px) {
+    .error-template h1 {
+        font-size: 6rem;
+    }
+
+    .error-template h2 {
+        font-size: 2rem;
+    }
+
+    .error-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0 !important;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.feature-icon, .step-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Задержки для анимации */
+.step-card:nth-child(1) { animation-delay: 0.1s; }
+.step-card:nth-child(2) { animation-delay: 0.2s; }
+.step-card:nth-child(3) { animation-delay: 0.3s; }
+.step-card:nth-child(4) { animation-delay: 0.4s; }
+
 h4 {
     color: #28a745 !important;
     padding-left: 20px;
@@ -19,11 +72,6 @@ h4 {
 
 .carousel-item img {
     border-radius: 10px;
-}
-
-.btn-primary {
-    background-color: #dc3545;
-    border-color: #dc3545;
 }
 
 .btn-primary:hover {

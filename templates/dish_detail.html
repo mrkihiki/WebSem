@@ -11,13 +11,13 @@
 {% if dish.url %}
 <div class="mb-3">
     <strong>Видео:</strong><br>
-    <iframe width="560" height="315" src="{{ dish.url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <iframe width="560" height="315" src="{{ dish.url |youtube_embed}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </div>
 {% endif %}
 
 <div class="card">
     <div class="card-body">
-        <h5>Рейтинг: {{ average_rating }} ({{ rating_count }} оценок)</h5>
+        <h5>Рейтинг: {{ dish_view.average_rating }} ({{ dish_view.rating_count }} оценок)</h5>
         
         <form method="POST" action="{{ url_for('dishes.rate_dish', dish_id=dish.id) }}" class="mb-3">
             <label>Ваша оценка:</label><br>

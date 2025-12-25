@@ -1,4 +1,5 @@
 import os
+from urllib.parse import urlparse, parse_qs
 
 from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_bootstrap import Bootstrap5
@@ -27,6 +28,40 @@ if os.environ.get("FLASK_ENV") != "testing":
 app.register_blueprint(auth_bp)
 app.register_blueprint(dishes_bp)
 app.register_blueprint(api_bp, url_prefix='/api')
+
+
+@app.template_filter('youtube_embed')
+def youtube_embed_filter(url):
+    """Фильтр Jinja2 для преобразования ссылки YouTube в embed"""
+    if not url:
+        return None
+
+    # Если уже embed-ссылка
+    if '/embed/' in url:
+        return url
+
+    # Сокращенная ссылка youtu.be
+    if 'youtu.be/' in url:
+        video_id = url.split('youtu.be/')[1].split('?')[0]
+        return f'https://www.youtube.com/embed/{video_id}'
+
+    # Обычная ссылка youtube.com/watch
+    if 'youtube.com/watch' in url:
+        parsed_url = urlparse(url)
+        video_id = parse_qs(parsed_url.query).get('v')
+        if video_id:
+            return f'https://www.youtube.com/embed/{video_id[0]}'
+
+    # Ссылка на shorts
+    if 'youtube.com/shorts/' in url:
+        video_id = url.split('youtube.com/shorts/')[1].split('?')[0]
+        return f'https://www.youtube.com/embed/{video_id}'
+
+    return url
+
+
+# Регистрируем фильтр
+app.jinja_env.filters['youtube_embed'] = youtube_embed_filter
 
 
 def get_navbar():

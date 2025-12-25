@@ -7,6 +7,7 @@
     <a href="{{ url_for('dishes.dishes_list') }}" class="btn btn-outline-primary">Все</a>
     <a href="{{ url_for('dishes.dishes_list', sort='rating') }}" class="btn btn-outline-primary">По рейтингу</a>
     <a href="{{ url_for('dishes.dishes_list', sort='favourites') }}" class="btn btn-outline-primary">Избранное</a>
+    <a href="{{ url_for('dishes.dishes_list', sort='my_dishes') }}" class="btn btn-outline-primary">Мои</a>
 </div>
 
 <div class="row">
@@ -23,6 +24,7 @@
                 <p class="text-warning">★ В избранном</p>
                 {% endif %}
                 <a href="{{ url_for('dishes.dish_detail', dish_id=dish.id) }}" class="btn btn-primary">Подробнее</a>
+                {% if dish.can_edit %}
                 <a href="{{ url_for('dishes.edit_dish', dish_id=dish.id) }}"
                                class="btn btn-warning">
                                 <i class="bi bi-pencil"></i> Изменить
@@ -35,6 +37,9 @@
                                     <i class="bi bi-trash"></i> Удалить
                                 </button>
                 </form>
+                {% else %}
+                <span class="text-muted">Нет прав</span>
+                {% endif %}
             </div>
         </div>
     </div>

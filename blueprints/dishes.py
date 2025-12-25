@@ -48,12 +48,29 @@ def dishes_list():
         dishes_query = session.query(DishWithRating).filter(
             DishWithRating.id.in_(dish_ids)
         ).all()
+    elif sort_by == 'my_dishes':
+        # Только блюда текущего пользователя
+        # Получаем сначала все блюда, потом фильтруем
+        all_dishes = session.query(Dish).filter(
+            Dish.author_id == current_user.id
+        ).all()
+        my_dish_ids = [dish.id for dish in all_dishes]
+        if my_dish_ids:
+            dishes_query = session.query(DishWithRating).filter(
+                DishWithRating.id.in_(my_dish_ids)
+            ).all()
+        else:
+            dishes_query = []  # У пользователя нет своих блюд
     else:
         dishes_query = session.query(DishWithRating).all()
 
     # Получаем дополнительную информацию для каждого блюда
     dishes = []
     for dish_view in dishes_query:
+        dish_full = session.query(Dish).filter(Dish.id == dish_view.id).first()
+        can_edit = False
+        if dish_full.author_id == current_user.id or current_user.id == 1:
+            can_edit = True
         dish_info = {
             'id': dish_view.id,
             'name': dish_view.name,
@@ -62,7 +79,8 @@ def dishes_list():
             'average_rating': dish_view.average_rating,
             'rating_count': dish_view.rating_count,
             'is_favourite': False,
-            'user_rating': None
+            'user_rating': None,
+            'can_edit': can_edit
         }
 
         # Проверяем, в избранном ли
@@ -104,7 +122,6 @@ def dish_detail(dish_id):
 
     # Получаем информацию из view
     dish_view = session.query(DishWithRating).get(dish_id)
-
     # Получаем оценку пользователя
     user_rating = session.query(DishRating).filter(
         DishRating.user_id == current_user.id,
