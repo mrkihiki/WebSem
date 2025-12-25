@@ -55,5 +55,5 @@ pip install -r requirements.txt
 4. Запуск приложения
 python app.py
 
-или передите на
+или передите по ссылке
 https://kihiki.pythonanywhere.com/
