@@ -61,7 +61,6 @@ class Dish(SqlAlchemyBase, SerializerMixin):
         session.close()
         return result
 
-
     def __repr__(self):
         return f"<Dish> {self.name} {self.ingredients}"
 

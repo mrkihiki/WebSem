@@ -1,5 +1,6 @@
 import sys
 import os
+
 os.environ["FLASK_ENV"] = "testing"
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
@@ -9,7 +10,7 @@ from data import db_session
 from data.dishes import Dish
 from data.favourites import Favourite
 from data.dish_ratings import DishRating
-import blueprints.api as api # blueprint с блюдами
+import blueprints.api as api  # blueprint с блюдами
 
 
 # ---------- ИНИЦИАЛИЗАЦИЯ БД ----------
@@ -60,16 +61,18 @@ def create_test_dish():
     session.close()
     return dish_id
 
+
 def dell_test_dish():
     session = db_session.create_session()
     session.query(Dish).filter(Dish.name == "Test Dish").delete()
     session.commit()
     session.close()
 
+
 # =====================================================
 # 1. ПОЛУЧЕНИЕ БЛЮД
 # =====================================================
-
+# Проверяем: получение списка всех блюд
 def test_get_all_dishes(client):
     response = client.get("/api/dishes")
     assert response.status_code == 200
@@ -78,6 +81,7 @@ def test_get_all_dishes(client):
     assert isinstance(data["dishes"], list)
 
 
+# Проверяем: получение одного блюда по корректному id
 def test_get_one_dish_correct(client):
     dish_id = create_test_dish()
     response = client.get(f"/api/dishes/{dish_id}")
@@ -87,6 +91,7 @@ def test_get_one_dish_correct(client):
     dell_test_dish()
 
 
+# Проверяем: получение блюда по несуществующему id
 def test_get_one_dish_not_found(client):
     response = client.get("/api/dishes/999999")
     assert response.status_code == 404
@@ -95,7 +100,7 @@ def test_get_one_dish_not_found(client):
 # =====================================================
 # 2. СОЗДАНИЕ БЛЮДА
 # =====================================================
-
+# Проверяем: корректное создание блюда авторизованным пользователем
 def test_create_dish_correct(client):
     login_as_captain(client)
 
@@ -119,6 +124,7 @@ def test_create_dish_correct(client):
     logout(client)
 
 
+# Проверяем: ошибка при создании блюда без обязательных полей
 def test_create_dish_missing_fields(client):
     login_as_captain(client)
     response = client.post("/api/dishes", json={"name": "Bad Dish"})
@@ -126,6 +132,7 @@ def test_create_dish_missing_fields(client):
     logout(client)
 
 
+# Проверяем: ошибка при создании блюда с дублирующимся именем
 def test_create_dish_duplicate_name(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -147,6 +154,7 @@ def test_create_dish_duplicate_name(client):
     dell_test_dish()
 
 
+# Проверяем: ошибка при создании блюда с некорректной ссылкой (не YouTube)
 def test_create_dish_invalid_url(client):
     login_as_captain(client)
     payload = {
@@ -162,7 +170,7 @@ def test_create_dish_invalid_url(client):
 # =====================================================
 # 3. ОБНОВЛЕНИЕ БЛЮДА
 # =====================================================
-
+# Проверяем: корректное обновление блюда авторизованным пользователем
 def test_update_dish_correct(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -173,7 +181,6 @@ def test_update_dish_correct(client):
     data = response.get_json()
     assert data["dish"]["name"] == "Updated Dish"
 
-
     session = db_session.create_session()
     dish = session.query(Dish).get(dish_id)
     session.delete(dish)
@@ -183,6 +190,7 @@ def test_update_dish_correct(client):
     dell_test_dish()
 
 
+# Проверяем: попытка обновления несуществующего блюда
 def test_update_dish_not_found(client):
     login_as_captain(client)
     response = client.put("/api/dishes/999999", json={"name": "No Dish"})
@@ -190,6 +198,7 @@ def test_update_dish_not_found(client):
     logout(client)
 
 
+# Проверяем: запрет обновления блюда неавторизованным пользователем
 def test_update_dish_permission_denied(client):
     dish_id = create_test_dish()
     response = client.put(f"/api/dishes/{dish_id}", json={"name": "Hack"})
@@ -200,7 +209,7 @@ def test_update_dish_permission_denied(client):
 # =====================================================
 # 4. УДАЛЕНИЕ БЛЮДА
 # =====================================================
-
+# Проверяем: корректное удаление блюда администратором
 def test_delete_dish_correct(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -211,6 +220,7 @@ def test_delete_dish_correct(client):
     dell_test_dish()
 
 
+# Проверяем: попытка удаления несуществующего блюда
 def test_delete_dish_not_found(client):
     login_as_captain(client)
     response = client.delete("/api/dishes/999999")
@@ -221,7 +231,7 @@ def test_delete_dish_not_found(client):
 # =====================================================
 # 5. РЕЙТИНГИ
 # =====================================================
-
+# Проверяем: корректную установку рейтинга блюда
 def test_rate_dish_correct(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -237,6 +247,7 @@ def test_rate_dish_correct(client):
     dell_test_dish()
 
 
+# Проверяем: ошибка при передаче некорректного значения рейтинга
 def test_rate_dish_invalid_value(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -250,6 +261,7 @@ def test_rate_dish_invalid_value(client):
     dell_test_dish()
 
 
+# Проверяем: получение рейтинга текущего пользователя
 def test_get_user_rating(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -266,7 +278,7 @@ def test_get_user_rating(client):
 # =====================================================
 # 6. ИЗБРАННОЕ
 # =====================================================
-
+# Проверяем: добавление и удаление блюда из избранного
 def test_toggle_favourite(client):
     login_as_captain(client)
     dish_id = create_test_dish()
@@ -282,6 +294,7 @@ def test_toggle_favourite(client):
     dell_test_dish()
 
 
+# Проверяем: получение списка избранных блюд пользователя
 def test_get_user_favourites(client):
     login_as_captain(client)
     dish_id = create_test_dish()

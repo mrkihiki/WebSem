@@ -146,7 +146,7 @@ def add_dish():
             flash('Блюдо с таким названием уже существует', 'danger')
             session.close()
             return redirect(url_for('dishes.add_dish'))
-        if not form.is_youtube_link(form.url.data) and  form.url.data  != "":
+        if not form.is_youtube_link(form.url.data) and form.url.data != "":
             flash('Неверная ссылка', 'danger')
             session.close()
             return redirect(url_for('dishes.add_dish'))
@@ -228,7 +228,7 @@ def edit_dish(dish_id):
                                        form=form,
                                        get_navbar=get_navbar(),
                                        get_footer=get_footer())
-        if not form.is_youtube_link(form.url.data) and  form.url.data  != "":
+        if not form.is_youtube_link(form.url.data) and form.url.data != "":
             flash('Неверная ссылка', 'danger')
             session.close()
             return redirect(url_for('dishes.edit_dish', dish_id=dish_id))

@@ -10,6 +10,7 @@ from data.users import User
 
 api_bp = Blueprint('api', __name__)
 
+
 def can_edit_dish(dish, user):
     """Проверяет, может ли пользователь редактировать/удалять блюдо"""
     if not user.is_authenticated:
@@ -24,6 +25,7 @@ def can_edit_dish(dish, user):
         return True
 
     return False
+
 
 def is_youtube_link(url):
     return "youtube.com" in url or "youtu.be" in url
@@ -108,7 +110,6 @@ def get_dishes():
             ).first()
             dish_data['is_favourite'] = favourite is not None
 
-
         dishes_list.append(dish_data)
 
     session.close()
@@ -156,7 +157,7 @@ def create_dish():
         ingredients=request.json['ingredients'],
         url=request.json.get('url')
     )
-    if not is_youtube_link(dish.url) and dish.url !="":
+    if not is_youtube_link(dish.url) and dish.url != "":
         return create_json_response({'error': 'The link should lead to YouTube'}, 400)
 
     session.add(dish)
@@ -181,9 +182,9 @@ def update_dish(dish_id):
     if not can_edit_dish(dish, current_user):
         session.close()
         return create_json_response({'error': 'Permission denied'}, 403)
-    if not is_youtube_link(request.json["url"]) and request.json["url"] !="":
+    if not is_youtube_link(request.json["url"]) and request.json["url"] != "":
         return create_json_response({'error': 'The link should lead to YouTube'}, 400)
-    if dish.name !=request.json["name"]:
+    if dish.name != request.json["name"]:
         existing_dish = session.query(Dish).filter(
             Dish.name == request.json["name"],
             Dish.id != dish.name

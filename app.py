@@ -266,7 +266,6 @@ def create_views():
 @app.route('/index')
 def index():
     db_sess = db_session.create_session()
-    dish_all = db_sess.query(Dish).order_by(Dish.id).all()
     if current_user.is_authenticated:
         return redirect(url_for('dishes.dishes_list'))
     return render_template('index.html',
@@ -276,11 +275,11 @@ def index():
 
 
 if __name__ == '__main__':
-    # Создаем необходимые представления
-    create_views()
+    if not os.path.exists("db/my.db"):
+        # Создаем необходимые представления
+        create_views()
 
-    # Заполняем базу тестовыми данными
-    seed_database()
-
+        # Заполняем базу тестовыми данными
+        seed_database()
     # Запускаем приложение
     app.run(port=8080, host='127.0.0.1')

@@ -1,4 +1,3 @@
-import datetime
 import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy_serializer import SerializerMixin
