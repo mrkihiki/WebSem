@@ -182,7 +182,8 @@ def update_dish(dish_id):
     if not can_edit_dish(dish, current_user):
         session.close()
         return create_json_response({'error': 'Permission denied'}, 403)
-    if not is_youtube_link(request.json["url"]) and request.json["url"] != "":
+    url = request.json.get("url", "")
+    if not is_youtube_link(url) and url != "":
         return create_json_response({'error': 'The link should lead to YouTube'}, 400)
     if dish.name != request.json["name"]:
         existing_dish = session.query(Dish).filter(

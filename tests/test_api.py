@@ -49,6 +49,10 @@ def logout(client):
 
 
 def create_test_dish():
+    try:
+        dell_test_dish()
+    except:
+        pass
     session = db_session.create_session()
     dish = Dish(
         name="Test Dish",
